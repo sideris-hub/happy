@@ -1,15 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 interface Stanza {
   lines: string[];
   isTitle?: boolean;
   isSpecial?: boolean;
   isClosing?: boolean;
 }
-
-// ─── Poem data ────────────────────────────────────────────────────────────────
 
 const stanzas: Stanza[] = [
   {
@@ -54,16 +50,12 @@ const stanzas: Stanza[] = [
   },
 ];
 
-// Total GSAP animation duration in ms + buffer before text appears
 const ANIM_DONE_MS = 14_500;
-
-// ─── App ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
   const [textVisible, setTextVisible] = useState(false);
   const scriptsLoaded = useRef(false);
 
-  // Load GSAP scripts and trigger flower animation
   useEffect(() => {
     if (scriptsLoaded.current) return;
     scriptsLoaded.current = true;
@@ -109,7 +101,6 @@ export default function App() {
         justifyContent: 'center',
       }}
     >
-      {/* ── Full-screen flower SVG ── */}
       <svg
         id="flower-frame"
         version="1.1"
@@ -125,7 +116,6 @@ export default function App() {
         dangerouslySetInnerHTML={{ __html: FLOWER_SVG_INNER }}
       />
 
-      {/* ── Poem overlay — centered on top of the SVG ── */}
       <div
         style={{
           position: 'relative',
@@ -148,8 +138,6 @@ export default function App() {
     </div>
   );
 }
-
-// ─── Stanza block ─────────────────────────────────────────────────────────────
 
 function StanzaBlock({
   stanza,
@@ -217,7 +205,7 @@ function StanzaBlock({
           style={{
             fontFamily: "'Great Vibes', cursive",
             color: stanza.isSpecial ? '#ffe0ec' : '#ffd6e0',
-              fontSize: stanza.isTitle
+            fontSize: stanza.isTitle
               ? 'clamp(1.4rem, 3.5vw, 2.2rem)'
               : stanza.isSpecial
                 ? 'clamp(1.3rem, 3vw, 2rem)'
@@ -238,8 +226,6 @@ function StanzaBlock({
   );
 }
 
-// ─── SVG inner markup ─────────────────────────────────────────────────────────
-// Content inside <svg id="flower-frame"> extracted from flowers_garden.
 const FLOWER_SVG_INNER = `
 <style type="text/css">
 	.st0{fill:#FFFFFF;}

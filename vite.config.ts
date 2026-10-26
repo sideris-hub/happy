@@ -13,7 +13,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  // Include PNG/JPG/WEBP as static assets (in addition to SVG/CSV)
   assetsInclude: ['**/*.svg', '**/*.csv', '**/*.png', '**/*.jpg', '**/*.webp'],
   server: {
     allowedHosts: true,
