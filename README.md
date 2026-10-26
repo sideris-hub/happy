@@ -1,76 +1,52 @@
-<div align="center">
+# for you 🌸
 
-# 🌸 for you
+A one-page animated birthday greeting: an SVG flower garden grows and blooms, then a short poem fades in on top of it.
 
-A minimalist, animated, one-page web experience created as a poetic greeting.
+**Status:** working prototype (exported from Figma Make). No tests, no CI, no deploy config.
 
-[Live Demo](#) · [Report Bug](#) · [Request Feature](#)
+## Stack
 
-</div>
+- React 18 + TypeScript, Vite 6
+- Tailwind CSS v4 (via `@tailwindcss/vite`), `tw-animate-css`
+- Flower animation: jQuery 3.2.1, GSAP 3 and DrawSVGPlugin, loaded from CDNs at runtime
+- Fonts: Google Fonts `Great Vibes` and `Special Elite`
+- Package manager: pnpm
 
-## 📖 About The Project
+## Run locally
 
-**"for you"** is a delicate, interactive web poem. It combines a beautiful SVG flower garden animation with a softly appearing poetic text. The project is designed to be a digital greeting card or a personal message that unfolds gracefully before the reader's eyes.
-
-### ✨ Features
-
-- **Animated Intro:** A stunning SVG flower garden that grows and blooms, powered by GSAP and DrawSVG.
-- **Scroll-Triggered Poetry:** Stanzas of a poem that gently fade in as the user scrolls down the page.
-- **Atmospheric Design:** A dark, moody background featuring a rose, complemented by elegant typography (`Great Vibes` and `Special Elite`).
-- **Responsive:** Looks beautiful on both desktop and mobile devices.
-
-### 🛠 Built With
-
-- [React](https://reactjs.org/)
-- [Vite](https://vitejs.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS v4](https://tailwindcss.com/)
-- [GSAP](https://greensock.com/gsap/) (for SVG animation)
-
-## 🚀 Getting Started
-
-To get a local copy up and running, follow these simple steps.
-
-### Prerequisites
-
-Make sure you have Node.js and `pnpm` installed.
+Requires Node.js and pnpm (`npm install -g pnpm`). No environment variables or `.env` are needed.
 
 ```sh
-npm install -g pnpm
+git clone https://github.com/sideris-hub/happy.git
+cd happy
+pnpm install
+pnpm dev      # dev server
+pnpm build    # production build into dist/
 ```
 
-### Installation
+The page needs internet access: GSAP, jQuery, DrawSVGPlugin and the fonts come from external CDNs.
 
-1. Clone the repo
-   ```sh
-   git clone https://github.com/sofisideris-cmd/happy.git
-   ```
-2. Install NPM packages
-   ```sh
-   cd happy
-   pnpm install
-   ```
-3. Start the development server
-   ```sh
-   pnpm run dev
-   ```
+## Tests
 
-## 📝 Customization
+There are no tests yet.
 
-You can easily customize the text of the poem to make it your own!
+## Structure
 
-1. Open `src/app/App.tsx`.
-2. Locate the `stanzas` array at the top of the file.
-3. Edit the `lines` within each stanza object. You can also use the `isTitle`, `isSpecial`, or `isClosing` flags to apply different styling to specific stanzas.
+```
+index.html                 HTML entry
+src/main.tsx               React entry
+src/app/App.tsx            the whole page: poem text, timings, inline flower SVG
+src/styles/                fonts, Tailwind and theme CSS
+public/flowers/            flower animation script (GSAP timeline) and its CSS
+vite.config.ts             Vite config
+```
 
-## 📜 Acknowledgements
+To edit the poem, change the `stanzas` array at the top of `src/app/App.tsx`. The `isTitle`, `isSpecial` and `isClosing` flags switch a stanza's styling.
 
-- The beautiful SVG flower animation was originally inspired by [flowers_garden](#) (HTML/CSS/JS).
-- Background rose image provided within the project assets.
-- Fonts provided by Google Fonts.
+## Why it's built this way
 
----
-<div align="center">
-  Made with ❤️ by Sofi
-</div>
-# happy
+- **The SVG is inlined into the page** (`FLOWER_SVG_INNER` in `App.tsx`, rendered via `dangerouslySetInnerHTML`). The animation script in `public/flowers/flower-script.js` finds parts of the drawing by their IDs (`#Stem1_1_`, `#Leaf2_1_`…), which only works if the SVG is part of the DOM, not an `<img>` or an external file.
+- **The SVG and animation are taken from the `flowers_garden` project** (HTML/CSS/JS) as-is, so the script is plain JS with jQuery and globals rather than React code. It is loaded with `<script>` tags at runtime, in order: jQuery → GSAP → DrawSVGPlugin → `flower-script.js`.
+- **The poem appears after a fixed delay** of 14.5 s (`ANIM_DONE_MS`), chosen to cover the GSAP timeline plus a small buffer. If the animation changes, this number has to be updated by hand.
+- **`postcss.config.mjs` is intentionally empty**: Tailwind v4 is wired in through the Vite plugin, which sets up PostCSS by itself.
+- **All fonts are loaded with a single Google Fonts request**, and `index.html` preconnects to the Google Fonts hosts to reduce loading latency.
